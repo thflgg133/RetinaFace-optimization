@@ -20,7 +20,6 @@ I have installed Ubuntu 20.04 server on a Raspberry Pi 4 with 4GB RAM and then s
 <br/>
 
 ## Raspberry Pi 4 Environment Setting
-
 ### Pytorch Setting (32bit armv7l standard)
 1. Check Raspberry OS
 ```shell
@@ -96,7 +95,18 @@ print(torchvision.__version__)
 <br/>
 
 ### Onnxruntime Setting
+1. Check Raspberry Pi os
+```shell
+cat /etc/debian_version
 
+# result
+--> bullseye
+```
+
+<br/>
+
+2. Install whl file  
+- visit the (https://github.com/nknytk/built-onnxruntime-for-raspberrypi-linux)
 
 
 
