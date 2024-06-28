@@ -7,7 +7,7 @@ I have installed Ubuntu 20.04 server on a Raspberry Pi 4 with 4GB RAM and then s
 ## Table of Contents
 - [Raspberry Pi 4 Environment Setting](#raspberry-pi-4-environment-setting)
   - [Pytorch Setting](#pytorch-setting-32bit-armv7l-standard)
-  - [Install Essential Tools](#install-essential-tools)
+  - [Onnxruntime Setting](#onnxruntime-setting)
   - [Enable SSH](#enable-ssh)
   - [Configure Swap Space](#configure-swap-space)
 - [Installation](#installation)
