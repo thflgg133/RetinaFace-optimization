@@ -480,10 +480,7 @@ python3 ros_onny.py
 <br/>
 
 ## Result
-| Name     | Age | City       |
-|----------|-----|------------|
-| John Doe | 25  | New York   |
-| Jane Doe | 28  | Los Angeles|
-| Sam Smith| 22  | Chicago    |
-
+|                |     Base model    |   onnx model  | onnx model(optimization) |
+|----------------|-------------------|---------------|--------------------------|
+| Inference Time | 3,700 ~ 4,200(ms) | 520 ~ 570(ms) |       490 ~ 530(ms)      |
 
