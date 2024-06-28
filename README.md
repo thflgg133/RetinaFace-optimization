@@ -8,10 +8,8 @@ I have installed Ubuntu 20.04 server on a Raspberry Pi 4 with 4GB RAM and then s
 - [Raspberry Pi 4 Environment Setting](#raspberry-pi-4-environment-setting)
   - [Pytorch Setting](#pytorch-setting-32bit-armv7l-standard)
   - [Onnxruntime Setting](#onnxruntime-setting)
-  - [Enable SSH](#enable-ssh)
-  - [Configure Swap Space](#configure-swap-space)
-- [Installation](#installation)
-  - [Download the .whl files](#download-the-whl-files)
+- [Download RetinaFace_pytorch](#download-retinaface-pytorch)
+  - [Workspace Setting](#workspace-setting)
   - [Install the .whl files](#install-the-whl-files)
 - [Usage](#usage)
 - [Contributing](#contributing)
@@ -133,6 +131,55 @@ import onnxruntime as ort
 print(ort.__version__)
 ```
 
+<br/>
+
+## Download RetinaFace pytorch
+### Workspace Setting  
+1. Use git clone to download RetinaFace
+```shell
+mkdir -p <your_workspace>/src
+cd <your_workspace>/src
+git clone https://github.com/biubug6/Pytorch_Retinaface
+```
+
+<br/>
+
+2. Install dependencies
+```shell
+pip3 install opencv-python
+```
+
+<br/>
+
+### Modify Code
+1. modify prior_box.py
+```shell
+# Before
+class PriorBox(object):
+    def __init__(self, cfg, image_size=None, phase='train'):
+        super(PriorBox, self).__init__()
+        self.min_sizes = cfg['min_sizes']
+        self.steps = cfg['steps']
+        self.clip = cfg['clip']
+        self.image_size = image_size
+        self.feature_maps = [[ceil(self.image_size[0]/step), ceil(self.image_size[1]/step)] for step in self.steps]
+        self.name = "s"
+
+
+# After
+class PriorBox(object):
+    def __init__(self, cfg, format:str="tensor", image_size=None, phase='train'):
+        super(PriorBox, self).__init__()
+        self.min_sizes = cfg['min_sizes']
+        self.steps = cfg['steps']
+        self.clip = cfg['clip']
+        self.image_size = image_size
+        self.feature_maps = [[ceil(self.image_size[0]/step), ceil(self.image_size[1]/step)] for step in self.steps]
+        self.name = "s"
+        self.__format = format
+```
+
+<br/>
 
 
 
