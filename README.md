@@ -472,7 +472,7 @@ if __name__ == '__main__':
 
 <br/>
 ## Evaluation
-``shell
+```shell
 import csv
 import cv2
 import time
@@ -757,5 +757,14 @@ if __name__ == "__main__":
 <br/>
 
 ## Result
+
+# My Project
+
+## Table Example
+| Name     | Age | City       |
+|----------|-----|------------|
+| John Doe | 25  | New York   |
+| Jane Doe | 28  | Los Angeles|
+| Sam Smith| 22  | Chicago    |
 
 
