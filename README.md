@@ -146,12 +146,17 @@ git clone https://github.com/biubug6/Pytorch_Retinaface
 
 2. Install dependencies
 ```shell
+pip3 install pyyaml
+pip3 install matplotlib
+pip3 install numpy
 pip3 install opencv-python
 ```
 
 <br/>
 
 ### Modify Code
+Because 
+
 1. modify prior_box.py
 ```shell
 # Before
@@ -177,9 +182,174 @@ class PriorBox(object):
         self.feature_maps = [[ceil(self.image_size[0]/step), ceil(self.image_size[1]/step)] for step in self.steps]
         self.name = "s"
         self.__format = format
+
+```
+```shell
+# Before
+    def forward(self):
+        anchors = []
+        for k, f in enumerate(self.feature_maps):
+            min_sizes = self.min_sizes[k]
+            for i, j in product(range(f[0]), range(f[1])):
+                for min_size in min_sizes:
+                    s_kx = min_size / self.image_size[1]
+                    s_ky = min_size / self.image_size[0]
+                    dense_cx = [x * self.steps[k] / self.image_size[1] for x in [j + 0.5]]
+                    dense_cy = [y * self.steps[k] / self.image_size[0] for y in [i + 0.5]]
+                    for cy, cx in product(dense_cy, dense_cx):
+                        anchors += [cx, cy, s_kx, s_ky]
+
+        # back to torch land
+        output = torch.Tensor(anchors).view(-1, 4)
+        if self.clip:
+            output.clamp_(max=1, min=0)
+        return output
+
+
+# After
+    def forward(self):
+        anchors = []
+        for k, f in enumerate(self.feature_maps):
+            min_sizes = self.min_sizes[k]
+            for i, j in product(range(f[0]), range(f[1])):
+                for min_size in min_sizes:
+                    s_kx = min_size / self.image_size[1]
+                    s_ky = min_size / self.image_size[0]
+                    dense_cx = [x * self.steps[k] / self.image_size[1] for x in [j + 0.5]]
+                    dense_cy = [y * self.steps[k] / self.image_size[0] for y in [i + 0.5]]
+                    for cy, cx in product(dense_cy, dense_cx):
+                        anchors += [cx, cy, s_kx, s_ky]
+
+        # back to torch land
+        if self.__format == "tensor":
+            output = torch.Tensor(anchors).view(-1, 4)
+        elif self.__format == "numpy":
+            output = np.array(anchors).reshape(-1, 4)
+        else:
+            print(TypeError(("ERROR: INVALID TYPE OF FORMAT")))
+
+        if self.clip:
+            if self.__format == "tensor":
+                output.clamp_(max=1, min=0)
+            else:
+                output = np.clip(output, 0, 1)
+
+        return output
 ```
 
 <br/>
 
+2. Modify 
+```shell
+# Before
+def decode(loc, priors, variances):
+    """Decode locations from predictions using priors to undo
+    the encoding we did for offset regression at train time.
+    Args:
+        loc (tensor): location predictions for loc layers,
+            Shape: [num_priors,4]
+        priors (tensor): Prior boxes in center-offset form.
+            Shape: [num_priors,4].
+        variances: (list[float]) Variances of priorboxes
+    Return:
+        decoded bounding box predictions
+    """
+
+    boxes = torch.cat((
+        priors[:, :2] + loc[:, :2] * variances[0] * priors[:, 2:],
+        priors[:, 2:] * torch.exp(loc[:, 2:] * variances[1])), 1)
+    boxes[:, :2] -= boxes[:, 2:] / 2
+    boxes[:, 2:] += boxes[:, :2]
+    return boxes
 
 
+# After
+def decode(loc, priors, variances):
+    """Decode locations from predictions using priors to undo
+    the encoding we did for offset regression at train time.
+    Args:
+        loc (tensor): location predictions for loc layers,
+            Shape: [num_priors,4]
+        priors (tensor): Prior boxes in center-offset form.
+            Shape: [num_priors,4].
+        variances: (list[float]) Variances of priorboxes
+    Return:
+        decoded bounding box predictions
+    """
+
+    boxes = None
+    if isinstance(loc, torch.Tensor) and isinstance(priors, torch.Tensor):
+        boxes = torch.cat((
+            priors[:, :2] + loc[:, :2] * variances[0] * priors[:, 2:],
+            priors[:, 2:] * torch.exp(loc[:, 2:] * variances[1])), 1)
+
+    elif isinstance(loc, np.ndarray) and isinstance(priors, np.ndarray):
+        boxes = np.concatenate((priors[:, :2] + loc[:, :2] * variances[0] * priors[:, 2:],
+                                priors[:, 2:] * np.exp(loc[:, 2:] * variances[1])), axis=1)
+
+    else:
+        print(type(loc), type(priors))
+        print(TypeError("ERROR: INVALID TYPE OF BOUNDING BOX"))
+
+    boxes[:, :2] -= boxes[:, 2:] / 2
+    boxes[:, 2:] += boxes[:, :2]
+    return boxes
+```
+```shell
+# Before
+def decode_landm(pre, priors, variances):
+    """Decode landm from predictions using priors to undo
+    the encoding we did for offset regression at train time.
+    Args:
+        pre (tensor): landm predictions for loc layers,
+            Shape: [num_priors,10]
+        priors (tensor): Prior boxes in center-offset form.
+            Shape: [num_priors,4].
+        variances: (list[float]) Variances of priorboxes
+    Return:
+        decoded landm predictions
+    """
+    landms = torch.cat((priors[:, :2] + pre[:, :2] * variances[0] * priors[:, 2:],
+                        priors[:, :2] + pre[:, 2:4] * variances[0] * priors[:, 2:],
+                        priors[:, :2] + pre[:, 4:6] * variances[0] * priors[:, 2:],
+                        priors[:, :2] + pre[:, 6:8] * variances[0] * priors[:, 2:],
+                        priors[:, :2] + pre[:, 8:10] * variances[0] * priors[:, 2:],
+                        ), dim=1)
+    return landms
+
+
+# After
+def decode_landm(pre, priors, variances):
+    """Decode landm from predictions using priors to undo
+    the encoding we did for offset regression at train time.
+    Args:
+        pre (tensor): landm predictions for loc layers,
+            Shape: [num_priors,10]
+        priors (tensor): Prior boxes in center-offset form.
+            Shape: [num_priors,4].
+        variances: (list[float]) Variances of priorboxes
+    Return:
+        decoded landm predictions
+    """
+    landms = None
+    if isinstance(pre, torch.Tensor) and isinstance(priors, torch.Tensor):
+        landms = torch.cat((priors[:, :2] + pre[:, :2] * variances[0] * priors[:, 2:],
+                            priors[:, :2] + pre[:, 2:4] * variances[0] * priors[:, 2:],
+                            priors[:, :2] + pre[:, 4:6] * variances[0] * priors[:, 2:],
+                            priors[:, :2] + pre[:, 6:8] * variances[0] * priors[:, 2:],
+                            priors[:, :2] + pre[:, 8:10] * variances[0] * priors[:, 2:],
+                            ), dim=1)
+
+    elif isinstance(pre, np.ndarray) and isinstance(priors, np.ndarray):
+        landms = np.concatenate((priors[:, :2] + pre[:, :2] * variances[0] * priors[:, 2:],
+                                 priors[:, :2] + pre[:, 2:4] * variances[0] * priors[:, 2:],
+                                 priors[:, :2] + pre[:, 4:6] * variances[0] * priors[:, 2:],
+                                 priors[:, :2] + pre[:, 6:8] * variances[0] * priors[:, 2:],
+                                 priors[:, :2] + pre[:, 8:10] * variances[0] * priors[:, 2:],
+                                 ), axis=1)
+
+    else:
+        print(TypeError("ERROR: INVALID TYPE OF LANDMARKS"))
+
+    return landms
+```
