@@ -106,7 +106,7 @@ cat /etc/debian_version
 <br/>
 
 2. Install whl file  
-- visit the (https://github.com/nknytk/built-onnxruntime-for-raspberrypi-linux)
+- visit the https://github.com/nknytk/built-onnxruntime-for-raspberrypi-linux
 
 
 
