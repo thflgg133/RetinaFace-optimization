@@ -480,7 +480,7 @@ python3 ros_onny.py
 <br/>
 
 ## Result
+Compared to the previous inference time, it shows approximately an 86.2% performance improvement.
 |                |     Base model    |   onnx model  | onnx model(optimization) |
-|----------------|-------------------|---------------|--------------------------|
+|:--------------:|:-----------------:|:-------------:|:------------------------:|
 | Inference Time | 3,700 ~ 4,200(ms) | 520 ~ 570(ms) |       490 ~ 530(ms)      |
-
