@@ -105,9 +105,33 @@ cat /etc/debian_version
 
 <br/>
 
-2. Install whl file  
-- visit the https://github.com/nknytk/built-onnxruntime-for-raspberrypi-linux
+2. Download whl file  
+- Following the https://github.com/nknytk/built-onnxruntime-for-raspberrypi-linux
+- Install the whl file compatible with the Python version and OS environment
+  
+ex)
+- Environment
+  - OS : bullseye
+  - python : 3.8.12
+  - 32bit(armv7l)
+ 
+- Download **wheels/bullseye/onnxruntime-1.9.1-cp38-cp38-linux_armv7l.whl**
+- cp38 = python3.8 / armv7l = 32bit
 
+<br/>
+
+3. Install whl file
+```shell
+pip3 install onnxruntime-1.9.1-cp38-cp38-linux_armv7l.whl
+```
+
+<br/>
+
+4. Check Install
+```shell
+import onnxruntime as ort
+print(ort.__version__)
+```
 
 
 
