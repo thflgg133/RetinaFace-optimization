@@ -5,16 +5,21 @@ I have installed Ubuntu 20.04 server on a Raspberry Pi 4 with 4GB RAM and then s
 <br/>
 
 ## Table of Contents
-- [Raspberry Pi 4 Environment Setting](#introduction)
+- [Raspberry Pi 4 Environment Setting](#raspberry-pi-4-environment-setting)
+  - [Pytorch Setting](#update-and-upgrade)
+  - [Install Essential Tools](#install-essential-tools)
+  - [Enable SSH](#enable-ssh)
+  - [Configure Swap Space](#configure-swap-space)
 - [Installation](#installation)
+  - [Download the .whl files](#download-the-whl-files)
+  - [Install the .whl files](#install-the-whl-files)
 - [Usage](#usage)
 - [Contributing](#contributing)
 - [License](#license)
-
 <br/>
 
 ## Raspberry Pi 4 Environment Setting
-### Pytorch setting (32bit armv7l standard)
+### Pytorch Setting (32bit armv7l standard)
 1. Check Raspberry OS
 ```shell
 uname -a
@@ -58,7 +63,7 @@ export MAX_JOBS=<num>
 
 <br/>
 
-5. Install pytorch & torchvision
+5. Install pytorch & torchvision  
 On a Raspberry Pi, installing PyTorch and torchvision using the pip install command is limited. Therefore, you need to manually install them using .whl files.
 ```shell
 # pytorch
@@ -76,8 +81,19 @@ python setup.py bdist_wheel
 
 <br/>
 
+6. check
+```shell
+python3
 
+import torch
+import torchvision
+print(torch.__version__)
+print(torchvision.__version__)
+```
 
+<br/>
+
+### Onnxruntime Setting
 
 
 
