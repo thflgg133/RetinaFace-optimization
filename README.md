@@ -6,7 +6,7 @@ I have installed Ubuntu 20.04 server on a Raspberry Pi 4 with 4GB RAM and then s
 
 ## Table of Contents
 - [Raspberry Pi 4 Environment Setting](#raspberry-pi-4-environment-setting)
-  - [Pytorch Setting](#update-and-upgrade)
+  - [Pytorch Setting](#pytorch-setting-32bit-armv7l-standard)
   - [Install Essential Tools](#install-essential-tools)
   - [Enable SSH](#enable-ssh)
   - [Configure Swap Space](#configure-swap-space)
@@ -16,9 +16,11 @@ I have installed Ubuntu 20.04 server on a Raspberry Pi 4 with 4GB RAM and then s
 - [Usage](#usage)
 - [Contributing](#contributing)
 - [License](#license)
+
 <br/>
 
 ## Raspberry Pi 4 Environment Setting
+
 ### Pytorch Setting (32bit armv7l standard)
 1. Check Raspberry OS
 ```shell
