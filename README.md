@@ -472,14 +472,15 @@ if __name__ == '__main__':
 
 <br/>
 ## Evaluation
-I use ROS Noetic for real-time inference through a RGB camera.  
+I use ROS Noetic for real-time inference through a RGB camera.
+
 ```shell
 python3 ros_onny.py
 ```
 
 <br/>
 
-## Result
+## Result  
 Compared to the previous inference time, it shows approximately an 86.2% performance improvement.
 |                |     Base model    |   onnx model  | onnx model(optimization) |
 |:--------------:|:-----------------:|:-------------:|:------------------------:|
